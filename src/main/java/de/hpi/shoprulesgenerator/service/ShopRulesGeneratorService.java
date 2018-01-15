@@ -37,7 +37,8 @@ public class ShopRulesGeneratorService {
     public HashMap<String, List<Rule>> getRulesForShop(long shopID) {
         URI targetUri = getURIForRandomOffers(shopID);
         List<Offer> randomOffers = getRestTemplate().getForObject(targetUri, GetRandomOffersResponse.class).getOffers();
-        cleanOfferUrls(randomOffers);
+        System.err.println("CLEANING IS DISABLED!");
+        //        cleanOfferUrls(randomOffers);
         return getGenerator().getRulesForShop(randomOffers);
     }
 
