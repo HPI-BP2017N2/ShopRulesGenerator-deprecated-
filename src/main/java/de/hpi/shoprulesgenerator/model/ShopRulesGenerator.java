@@ -9,6 +9,7 @@ import java.util.List;
 public class ShopRulesGenerator {
 
     public HashMap<String, List<Rule>> getRulesForShop(List<Offer> offers) {
+
         return null;
     }
 }
