@@ -15,10 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
 public class ShopRulesGenerator {
@@ -28,11 +25,48 @@ public class ShopRulesGenerator {
             "HPI-BPN2-2017/2.1; https://hpi.de/naumann/teaching/bachelorprojekte/inventory-management.html)";
 
     public HashMap<String, List<Rule>> getRulesForShop(List<Offer> offers) {
+        HashMap<String, List<Rule>> rules = new HashMap<>();
+        HashMap<String, HashMap<String, Integer>> selectorsMap = new HashMap<>();
         for (Offer offer : offers) {
             try {
-                System.out.println(getSelectorsForOffer(offer));
-            } catch (IllegalAccessException | IOException e) {
-                e.printStackTrace();
+                HashMap<String, List<String>> selectors = getSelectorsForOffer(offer);
+                for (Map.Entry<String, List<String>> entry : selectors.entrySet()) {
+                    if (!selectorsMap.containsKey(entry.getKey())) {
+                        selectorsMap.put(entry.getKey(), new HashMap<String, Integer>());
+                    }
+                    for (String selector : entry.getValue()) {
+                        if (selectorsMap.get(entry.getKey()).containsKey(selector)) {
+                            selectorsMap.get(entry.getKey()).put(selector, selectorsMap.get(entry.getKey()).get
+                                    (selector) + 1);
+                        } else {
+                            selectorsMap.get(entry.getKey()).put(selector, 1);
+                        }
+                    }
+                }
+            } catch (IllegalAccessException | IOException ignored) {}
+        }
+        for (Map.Entry<String, HashMap<String, Integer>> entry : selectorsMap.entrySet()) {
+            for (Iterator<Map.Entry<String, Integer>> iterator = entry.getValue().entrySet().iterator(); iterator
+                    .hasNext();) {
+                Map.Entry<String, Integer> selectorEntry = iterator.next();
+                if (selectorEntry.getValue() == 10) { //this need to be changed, if attribute was not found
+                    if (!rules.containsKey(entry.getKey())) {
+                        rules.put(entry.getKey(), new LinkedList<Rule>());
+                    }
+                    Rule rule = new Rule();
+                    rule.setAttribute(null);
+                    rule.setResultAsPlainText(true);
+                    rule.setXPath(selectorEntry.getKey());
+                    rules.get(entry.getKey()).add(rule);
+                }
+            }
+        }
+        for (Map.Entry<String, List<Rule>> entry : rules.entrySet()) {
+            System.out.println("================");
+            System.out.println(entry.getKey());
+            System.out.println("================");
+            for (Rule rule : entry.getValue()) {
+                System.out.println(rule.getXPath());
             }
         }
         return null;
