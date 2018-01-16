@@ -8,10 +8,12 @@ import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,6 +24,8 @@ import java.util.Map;
 public class ShopRulesGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final int HTTP_TIMEOUT = 5000;
+    @Getter(AccessLevel.PRIVATE) private static final String USER_AGENT = "Mozilla/5.0 (compatible; " +
+            "HPI-BPN2-2017/2.1; https://hpi.de/naumann/teaching/bachelorprojekte/inventory-management.html)";
 
     public HashMap<String, List<Rule>> getRulesForShop(List<Offer> offers) {
         for (Offer offer : offers) {
@@ -37,26 +41,44 @@ public class ShopRulesGenerator {
     private HashMap<String, List<String>> getSelectorsForOffer(Offer offer) throws IllegalAccessException, IOException {
         HashMap<String, List<String>> selectors = new HashMap<>();
         HashMap<String, String> snapshot = offer.getOfferSnapshot();
-        Document htmlDocument = Jsoup.parse(new URL(offer.getUrl().get(Integer.toString(0))), getHTTP_TIMEOUT());
-        for (Map.Entry<String, String> productAttribute : snapshot.entrySet()) {
-            if (productAttribute.getValue() != null) {
-                selectors.put(productAttribute.getKey(), getXPathsForOfferAttribute(htmlDocument, productAttribute.getValue()));
+        Document htmlDocument = loadHtml(new URL(offer.getUrl().get(Integer.toString(0))));
+        if (htmlDocument != null) {
+            for (Map.Entry<String, String> productAttribute : snapshot.entrySet()) {
+                if (productAttribute.getValue() != null) {
+                    selectors.put(productAttribute.getKey(), getXPathsForOfferAttribute(htmlDocument, productAttribute.getValue()));
+                }
             }
         }
         return selectors;
     }
 
+    private Document loadHtml(URL url) throws IOException {
+        if (url.getProtocol().equals("file")){
+            try {
+                return Jsoup.parse(new File(url.toURI()), null);
+            } catch (URISyntaxException ignored) {}
+        } else if (url.getProtocol().startsWith("http")) {
+            return Jsoup
+                    .connect(url.toString())
+                    .userAgent(getUSER_AGENT())
+                    .get();
+        }
+        return null;
+    }
+
     private List<String> getXPathsForOfferAttribute(Document html, String offerAttribute){
-        /*
-        TODO NEXT
-        escape attributes like " &aum
-         */
+        offerAttribute = prepareHtml(offerAttribute);
         List<String> xPaths = new LinkedList<>();
-        System.out.println("*:containsOwn(" + offerAttribute + ")");
         for (Element element : html.select("*:containsOwn(" + offerAttribute + ")")){
             xPaths.add(getXPathForDomElement(html, element));
         }
         return xPaths;
+    }
+
+    private String prepareHtml(String html) {
+        return html
+                .replace("\"", "\\\"")
+                .replace("uml", "uml;");
     }
 
     private String getXPathForDomElement(Document html, Element element){
