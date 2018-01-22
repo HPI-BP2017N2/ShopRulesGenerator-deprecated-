@@ -1,6 +1,6 @@
 package de.hpi.shoprulesgenerator.controller;
 
-import de.hpi.shoprulesgenerator.dto.GetResponse;
+import de.hpi.restclient.dto.GetRulesResponse;
 import de.hpi.shoprulesgenerator.service.ShopRulesGeneratorService;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,10 +22,10 @@ public class ShopRulesGeneratorController {
         setService(service);
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET, produces = "application/json")
-    public GetResponse get(@RequestParam(value="shopID") long shopID) {
-        GetResponse response = new GetResponse();
-        response.setRules(getService().getRulesForShop(shopID));
+    @RequestMapping(value = "/getRules", method = RequestMethod.GET, produces = "application/json")
+    public GetRulesResponse get(@RequestParam(value="shopID") long shopID) {
+        GetRulesResponse response = new GetRulesResponse();
+
         return response;
     }
 }

@@ -1,0 +1,5 @@
+bpbridge:
+  root: 'http://ts1552.byod.hpi.de:2162'
+  getRandomOfferRoute: '/getRandomOffers'
+  shopIDToURLRoute: '/shopIDToUrl'
+  maxCount: 10

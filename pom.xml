@@ -49,11 +49,18 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>RELEASE</version>
         </dependency>
+
+        <!-- RESTClient -->
+        <dependency>
+            <groupId>de.hpi</groupId>
+            <artifactId>RESTClient</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <properties>
         <java.version>1.8</java.version>
-        <start-class>de.hpi.</start-class>
+        <start-class>de.hpi.shoprulesgenerator.Application</start-class>
     </properties>
 
 
