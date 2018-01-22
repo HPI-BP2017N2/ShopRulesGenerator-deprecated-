@@ -22,6 +22,11 @@ public class Offer {
         Java reflection is used and indicates possible bad code style, but ensures code flexibility.
         Reconsider this code snippet maybe.
      */
+
+    /**
+     * @return Returns a map containing the attribute name - value pairs of this class
+     * @throws IllegalAccessException Gets thrown if any JavaReflection access failed.
+     */
     @JsonIgnore
     public HashMap<String, String> getOfferSnapshot() throws IllegalAccessException {
         HashMap<String, String> snapshot = new HashMap<>();
@@ -33,6 +38,11 @@ public class Offer {
         return snapshot;
     }
 
+    /**
+     * @param object The object that needs to be converted to a string representation.
+     * @return String representation for the given object. If the object is a list or a map, the first value gets
+     * returned.
+     */
     @JsonIgnore
     private String getValue(Object object) {
         if (object instanceof Map) {
