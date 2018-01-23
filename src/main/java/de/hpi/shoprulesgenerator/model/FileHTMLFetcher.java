@@ -12,6 +12,9 @@ public class FileHTMLFetcher implements HTMLFetcher {
 
     @Override
     public Document fetch(URL url) throws IOException, URISyntaxException {
+        if (!url.getProtocol().equals("file")) {
+            throw new IOException("Protocol of url is not a valid file protocol");
+        }
         return Jsoup.parse(new File(url.toURI()), null);
     }
 }
