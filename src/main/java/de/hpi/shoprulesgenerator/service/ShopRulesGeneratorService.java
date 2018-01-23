@@ -1,19 +1,21 @@
 package de.hpi.shoprulesgenerator.service;
 
-import de.hpi.shoprulesgenerator.model.ShopRulesGenerator;
+import de.hpi.restclient.clients.BPBridgeClient;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
 public class ShopRulesGeneratorService {
 
-    private ShopRulesGenerator generator;
+    private BPBridgeClient bpBridgeClient;
 
-    public ShopRulesGeneratorService() {
-        setGenerator(new ShopRulesGenerator());
+    @Autowired
+    public ShopRulesGeneratorService(BPBridgeClient bpBridgeClient) {
+        setBpBridgeClient(bpBridgeClient);
     }
 
 }
