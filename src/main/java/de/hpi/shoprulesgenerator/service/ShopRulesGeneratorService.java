@@ -36,7 +36,6 @@ public class ShopRulesGeneratorService {
         setShopRulesGenerator(new ShopRulesGenerator(
                 getProperties().getMaxOfferCount(),
                 getProperties().getMinMatchCountPerAttribute(),
-                getProperties().getMinMatchRatePerAttribute(),
                 getProperties().getMinConfidence(),
                 getProperties().getFetchDelay()));
     }

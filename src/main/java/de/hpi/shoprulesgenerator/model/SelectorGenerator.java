@@ -34,9 +34,15 @@ public class SelectorGenerator {
         while (!isElementIDSet(element) && element.parent() != null){
             int tagIndex = getTagIndexForChild(element.parent(), element);
             xPathBuilder.insert(0, " " + element.tagName() + ":eq(" + tagIndex + ")");
+            if (element.tagName().equals("html")){
+                xPathBuilder.deleteCharAt(0);
+            }
             element = element.parent();
         }
-        xPathBuilder.insert(0,"*#" + element.id());
+        if (isElementIDSet(element)){
+            xPathBuilder.insert(0,"*#" + element.id());
+        }
+
         return xPathBuilder.toString();
     }
 

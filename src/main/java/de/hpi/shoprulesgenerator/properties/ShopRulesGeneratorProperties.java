@@ -29,10 +29,6 @@ public class ShopRulesGeneratorProperties {
 
     @Min(0)
     @Max(100)
-    private int minMatchRatePerAttribute;
-
-    @Min(0)
-    @Max(100)
     private int minConfidence;
 
     @Min(0)

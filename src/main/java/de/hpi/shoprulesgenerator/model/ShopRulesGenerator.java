@@ -9,25 +9,21 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.EnumMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
 public class ShopRulesGenerator {
 
-    private int maxOfferCount, minMatchCountPerAttribute, minMatchRatePerAttribute, minConfidence, fetchDelayInMs;
+    private int maxOfferCount, minMatchCountPerAttribute, minConfidence, fetchDelayInMs;
 
-    public ShopRulesGenerator(int maxOfferCount, int minMatchCountPerAttribute, int minMatchRatePerAttribute, int
+    public ShopRulesGenerator(int maxOfferCount, int minMatchCountPerAttribute, int
             minConfidence, int fetchDelayInMS) {
         setMaxOfferCount(maxOfferCount);
-        setMinMatchRatePerAttribute(minMatchRatePerAttribute);
         setMinMatchCountPerAttribute(minMatchCountPerAttribute);
         setMinConfidence(minConfidence);
     }
 
-    public Rules generate(OfferFetcher offerFetcher, HTMLFetcher htmlFetcher,
+    public Rules generate(Iterator<Offer> offerFetcher, HTMLFetcher htmlFetcher,
                           SelectorGenerator selectorGenerator) {
         EnumMap<OfferAttribute, AttributeEntry> attributeMap = addSelectorsForOffer(offerFetcher, selectorGenerator,
                 htmlFetcher);
@@ -62,7 +58,7 @@ public class ShopRulesGenerator {
         for (Map.Entry<OfferAttribute, AttributeEntry> attributeEntry : attributeMap.entrySet()) {
             List<String> filteredSelectors = new LinkedList<>();
             for (Map.Entry<String, Integer> selectorEntry : attributeEntry.getValue().getSelectorCountMap().entrySet()) {
-                if ((double) selectorEntry.getValue() / attributeEntry.getValue().getAttributeValueFound() * 100 >=
+                if ((double) selectorEntry.getValue() / attributeEntry.getValue().getAttributeValueFound() * 100.0 >=
                         getMinConfidence()) {
                     filteredSelectors.add(selectorEntry.getKey());
                 }
@@ -72,10 +68,10 @@ public class ShopRulesGenerator {
         return selectorMap;
     }
 
-    private EnumMap<OfferAttribute,AttributeEntry> addSelectorsForOffer(OfferFetcher offerFetcher, SelectorGenerator selectorGenerator, HTMLFetcher htmlFetcher) {
+    private EnumMap<OfferAttribute,AttributeEntry> addSelectorsForOffer(Iterator<Offer> offerFetcher, SelectorGenerator selectorGenerator, HTMLFetcher htmlFetcher) {
         EnumMap<OfferAttribute, AttributeEntry> attributeMap = createEmptyAttributeMap();
         for (int iOffer = 0;
-             iOffer < getMaxOfferCount() && requiresMoreOffers(attributeMap, iOffer) && offerFetcher.hasNext();
+             iOffer < getMaxOfferCount() && requiresMoreOffers(attributeMap) && offerFetcher.hasNext();
              iOffer++) {
             try {
                 addSelectorsForOffer(offerFetcher.next(), attributeMap, selectorGenerator, htmlFetcher);
@@ -97,14 +93,16 @@ public class ShopRulesGenerator {
         EnumMap<OfferAttribute, String> snapshot = offer.getOfferSnapshot();
         URL url = new URL(snapshot.get(OfferAttribute.URL));
         Document document = htmlFetcher.fetch(url);
-
         for (Map.Entry<OfferAttribute, String> offerAttribute : snapshot.entrySet()) {
+            if (offerAttribute.getValue() == null) {
+                continue;
+            }
             List<String> selectors = selectorGenerator.getSelectorForOfferAttribute(document, offerAttribute.getValue());
-            updateAttributeEntry(attributeMap.get(offerAttribute.getKey()), offerAttribute.getKey(), selectors);
+            updateAttributeEntry(attributeMap.get(offerAttribute.getKey()), selectors);
         }
     }
 
-    private void updateAttributeEntry(AttributeEntry entry, OfferAttribute key, List<String> selectors) {
+    private void updateAttributeEntry(AttributeEntry entry, List<String> selectors) {
         if (selectors.isEmpty()) {
             return;
         }
@@ -118,18 +116,13 @@ public class ShopRulesGenerator {
     }
 
     //conditionals
-    private boolean requiresMoreOffers(EnumMap<OfferAttribute, AttributeEntry> attributeMap, int currentOfferCount) {
+    private boolean requiresMoreOffers(EnumMap<OfferAttribute, AttributeEntry> attributeMap) {
         for (AttributeEntry entry : attributeMap.values()) {
-            if (!minimumAbsoluteAttributeCountReached(entry.getAttributeValueFound()) ||
-                    !minimumRelativeAttributeCountReached(entry.getAttributeValueFound(), currentOfferCount) ){
+            if (!minimumAbsoluteAttributeCountReached(entry.getAttributeValueFound())){
                 return true;
             }
         }
         return false;
-    }
-
-    private boolean minimumRelativeAttributeCountReached(int attributeCount, int currentOfferCount) {
-        return (double) attributeCount / currentOfferCount * 100.0 >= getMinMatchRatePerAttribute();
     }
 
     private boolean minimumAbsoluteAttributeCountReached(int attributeCount) {
