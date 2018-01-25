@@ -33,7 +33,12 @@ public class ShopRulesGeneratorService {
         setProperties(properties);
         setWebHTMLFetcher(new WebHTMLFetcher(getProperties().getUserAgent()));
         setSelectorGenerator(new SelectorGenerator());
-        setShopRulesGenerator(new ShopRulesGenerator());
+        setShopRulesGenerator(new ShopRulesGenerator(
+                getProperties().getMaxOfferCount(),
+                getProperties().getMinMatchCountPerAttribute(),
+                getProperties().getMinMatchRatePerAttribute(),
+                getProperties().getMinConfidence(),
+                getProperties().getFetchDelay()));
     }
 
     public Rules generateForShop(long shopID) {

@@ -30,6 +30,9 @@ public class OfferFetcher implements Iterator<Offer>{
 
     @Override
     public boolean hasNext() {
+        if (!getListIterator().hasNext()){
+            fetchNextPage();
+        }
         return getListIterator().hasNext();
     }
 

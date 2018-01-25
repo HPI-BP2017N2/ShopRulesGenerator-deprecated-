@@ -20,6 +20,24 @@ public class ShopRulesGeneratorProperties {
     @Max(20)
     private int pageSize;
 
+    @Min(1)
+    @Max(50)
+    private int maxOfferCount;
+
+    @Min(0)
+    private int minMatchCountPerAttribute;
+
+    @Min(0)
+    @Max(100)
+    private int minMatchRatePerAttribute;
+
+    @Min(0)
+    @Max(100)
+    private int minConfidence;
+
+    @Min(0)
+    private int fetchDelay;
+
     @NotBlank
     private String userAgent;
 }
