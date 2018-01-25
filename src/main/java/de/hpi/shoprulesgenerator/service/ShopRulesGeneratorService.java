@@ -1,6 +1,7 @@
 package de.hpi.shoprulesgenerator.service;
 
 import de.hpi.restclient.clients.BPBridgeClient;
+import de.hpi.shoprulesgenerator.model.OfferFetcher;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

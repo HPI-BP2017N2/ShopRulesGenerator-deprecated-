@@ -1,6 +1,6 @@
 package de.hpi.shoprulesgenerator.model;
 
-import de.hpi.shoprulesgenerator.model.data.Offer;
+import de.hpi.restclient.pojo.Offer;
 import lombok.Getter;
 import lombok.Setter;
 

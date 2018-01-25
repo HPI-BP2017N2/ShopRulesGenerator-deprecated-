@@ -25,7 +25,6 @@ public class ShopRulesGeneratorController {
     @RequestMapping(value = "/getRules", method = RequestMethod.GET, produces = "application/json")
     public GetRulesResponse get(@RequestParam(value="shopID") long shopID) {
         GetRulesResponse response = new GetRulesResponse();
-
         return response;
     }
 }
