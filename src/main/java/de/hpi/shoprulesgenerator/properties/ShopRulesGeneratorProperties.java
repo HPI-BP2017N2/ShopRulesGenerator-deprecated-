@@ -12,7 +12,7 @@ import javax.validation.constraints.Min;
 
 @Component
 @EnableConfigurationProperties
-@ConfigurationProperties("bpbridge")
+@ConfigurationProperties("shoprulesgenerator")
 @Getter @Setter
 public class ShopRulesGeneratorProperties {
 

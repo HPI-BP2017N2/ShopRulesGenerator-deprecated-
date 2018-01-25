@@ -12,9 +12,24 @@ import java.util.List;
 @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
 public class ShopRulesGenerator {
 
-    public static Rules generate(OfferFetcher offerFetcher, HTMLFetcher htmlFetcher,
+    public Rules generate(OfferFetcher offerFetcher, HTMLFetcher htmlFetcher,
                                  SelectorGenerator selectorGenerator) {
+        EnumMap<OfferAttribute, AttributeEntry> attributeMap = fetchSelectors();
+        EnumMap<OfferAttribute, List<String>> selectorMap = filterSelectors(attributeMap);
+        return createRulesFromSelectors(selectorMap);
+    }
 
+    private Rules createRulesFromSelectors(EnumMap<OfferAttribute, List<String>> selectorMap) {
         return null;
     }
+
+    private  EnumMap<OfferAttribute, List<String>> filterSelectors(EnumMap<OfferAttribute, AttributeEntry> attributeMap) {
+        return null;
+    }
+
+    private  EnumMap<OfferAttribute,AttributeEntry> fetchSelectors() {
+        
+        return null;
+    }
+
 }

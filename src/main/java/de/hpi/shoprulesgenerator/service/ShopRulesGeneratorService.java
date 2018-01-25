@@ -23,6 +23,7 @@ public class ShopRulesGeneratorService {
 
     private BPBridgeClient bpBridgeClient;
     private SelectorGenerator selectorGenerator;
+    private ShopRulesGenerator shopRulesGenerator;
     private ShopRulesGeneratorProperties properties;
     private WebHTMLFetcher webHTMLFetcher;
 
@@ -32,11 +33,12 @@ public class ShopRulesGeneratorService {
         setProperties(properties);
         setWebHTMLFetcher(new WebHTMLFetcher(getProperties().getUserAgent()));
         setSelectorGenerator(new SelectorGenerator());
+        setShopRulesGenerator(new ShopRulesGenerator());
     }
 
     public Rules generateForShop(long shopID) {
         OfferFetcher offerFetcher = new OfferFetcher(getBpBridgeClient(), shopID, getProperties().getPageSize());
-        return ShopRulesGenerator.generate(offerFetcher, getWebHTMLFetcher(), getSelectorGenerator());
+        return getShopRulesGenerator().generate(offerFetcher, getWebHTMLFetcher(), getSelectorGenerator());
     }
 
 }

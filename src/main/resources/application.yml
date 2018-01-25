@@ -1,8 +1,0 @@
-bpbridge:
-  root: 'http://ts1552.byod.hpi.de:2162'
-  getRandomOfferRoute: '/getRandomOffers'
-  shopIDToURLRoute: '/shopIDToUrl'
-
-shopRulesGenerator:
-  pageSize: 10
-  userAgent: Mozilla/5.0 (compatible; HPI-BPN2-2017/2.1; https://hpi.de/naumann/teaching/bachelorprojekte/inventory-management.html)
