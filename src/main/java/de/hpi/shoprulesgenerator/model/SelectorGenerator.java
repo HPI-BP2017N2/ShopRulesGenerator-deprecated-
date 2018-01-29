@@ -23,40 +23,43 @@ public class SelectorGenerator {
         return (elements.isEmpty()) ? null : elements.get(0);
     }
 
-    private  String prepareAttribute(String html) {
+    private String prepareAttribute(String html) {
         return html
                 .replace("\"", "\\\"")
                 .replace("uml", "uml;");
     }
 
-    private  String getSelectorForDomElement(Document html, Element element){
-        StringBuilder xPathBuilder = new StringBuilder();
+    private String getSelectorForDomElement(Document html, Element element){
+        StringBuilder selectorBuilder = new StringBuilder();
         while (!isElementIDSet(element) && element.parent() != null){
             int tagIndex = getTagIndexForChild(element.parent(), element);
-            xPathBuilder.insert(0, " " + element.tagName() + ":eq(" + tagIndex + ")");
+            selectorBuilder.insert(0, " " + element.tagName() + ":nth-of-type(" + tagIndex + ")");
             if (element.tagName().equals("html")){
-                xPathBuilder.deleteCharAt(0);
+                selectorBuilder.deleteCharAt(0);
             }
             element = element.parent();
         }
         if (isElementIDSet(element)){
-            xPathBuilder.insert(0,"*#" + element.id());
+            selectorBuilder.insert(0,"#" + element.id());
         }
 
-        return xPathBuilder.toString();
+        return selectorBuilder.toString();
     }
 
-    private  int getTagIndexForChild(Element parent, Element child){
+    private int getTagIndexForChild(Element parent, Element child){
         Elements childElementsWithTag = parent.getElementsByTag(child.tagName());
         for (int iElement = 0; iElement < childElementsWithTag.size(); iElement++){
             if (childElementsWithTag.get(iElement).equals(child)){
-                return iElement;
+                if (parent.tagName().equals(child.tagName())){
+                    iElement--;
+                }
+                return iElement + 1;
             }
         }
         return -1;
     }
 
-    private  boolean isElementIDSet(Element element) {
+    private boolean isElementIDSet(Element element) {
         return !element.id().isEmpty();
     }
 }

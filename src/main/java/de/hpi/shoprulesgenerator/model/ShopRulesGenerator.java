@@ -21,6 +21,7 @@ public class ShopRulesGenerator {
         setMaxOfferCount(maxOfferCount);
         setMinMatchCountPerAttribute(minMatchCountPerAttribute);
         setMinConfidence(minConfidence);
+        setFetchDelayInMs(fetchDelayInMS);
     }
 
     public Rules generate(Iterator<Offer> offerFetcher, HTMLFetcher htmlFetcher,
@@ -58,8 +59,8 @@ public class ShopRulesGenerator {
         for (Map.Entry<OfferAttribute, AttributeEntry> attributeEntry : attributeMap.entrySet()) {
             List<String> filteredSelectors = new LinkedList<>();
             for (Map.Entry<String, Integer> selectorEntry : attributeEntry.getValue().getSelectorCountMap().entrySet()) {
-                if ((double) selectorEntry.getValue() / attributeEntry.getValue().getAttributeValueFound() * 100.0 >=
-                        getMinConfidence()) {
+                if (isMinConfidenceReached(selectorEntry.getValue(), attributeEntry.getValue().getAttributeValueFound
+                        ()) && minimumAbsoluteAttributeCountReached(attributeEntry.getValue().getAttributeValueFound())) {
                     filteredSelectors.add(selectorEntry.getKey());
                 }
             }
@@ -127,5 +128,9 @@ public class ShopRulesGenerator {
 
     private boolean minimumAbsoluteAttributeCountReached(int attributeCount) {
         return attributeCount >= getMinMatchCountPerAttribute();
+    }
+
+    private boolean isMinConfidenceReached(double selectorCount, double attributeValueFound) {
+        return selectorCount / attributeValueFound * 100.0 >= getMinConfidence();
     }
 }

@@ -28,7 +28,7 @@ class ShopRulesGeneratorTest {
             offer.getUrl().put("0", getClass().getClassLoader().getResource("offer-websites" + File.separator +
                     offer.getUrl().get("0")).toString());
         }
-        setGenerator(new ShopRulesGenerator(10, 10, 100, 20000));
+        setGenerator(new ShopRulesGenerator(10, 7, 100, 0));
     }
 
     @Test
