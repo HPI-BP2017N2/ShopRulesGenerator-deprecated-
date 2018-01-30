@@ -23,34 +23,32 @@ public class SelectorGenerator {
         return (elements.isEmpty()) ? null : elements.get(0);
     }
 
-    private String prepareAttribute(String html) {
-        return html
-                .replace("\"", "\\\"")
-                .replace("uml", "uml;");
-    }
-
     private String getSelectorForDomElement(Document html, Element element){
         StringBuilder selectorBuilder = new StringBuilder();
         while (!isElementIDSet(element) && element.parent() != null){
-            int tagIndex = getTagIndexForChild(element.parent(), element);
+            int tagIndex = getTagIndexForChild(element);
             selectorBuilder.insert(0, " " + element.tagName() + ":nth-of-type(" + tagIndex + ")");
-            if (element.tagName().equals("html")){
-                selectorBuilder.deleteCharAt(0);
-            }
             element = element.parent();
         }
         if (isElementIDSet(element)){
             selectorBuilder.insert(0,"#" + element.id());
+        } else { //element.parent() == null
+            selectorBuilder.deleteCharAt(0);
         }
-
         return selectorBuilder.toString();
     }
 
-    private int getTagIndexForChild(Element parent, Element child){
+    /**
+     * @param child The child element, that's tag index should get returned for
+     * @return A 1-based index indicating umpteenth child this is of its own parent with the same tag as the child.
+     */
+    private int getTagIndexForChild(Element child){
+        Element parent = child.parent();
+        if (parent == null) { return -1; }
         Elements childElementsWithTag = parent.getElementsByTag(child.tagName());
         for (int iElement = 0; iElement < childElementsWithTag.size(); iElement++){
             if (childElementsWithTag.get(iElement).equals(child)){
-                if (parent.tagName().equals(child.tagName())){
+                if (parent.tagName().equals(child.tagName())){ //resolving an unexpected behaviour of JSoup
                     iElement--;
                 }
                 return iElement + 1;
@@ -59,6 +57,14 @@ public class SelectorGenerator {
         return -1;
     }
 
+    //conversion
+    private String prepareAttribute(String html) {
+        return html
+                .replace("\"", "\\\"")
+                .replace("uml", "uml;");
+    }
+
+    //conditionals
     private boolean isElementIDSet(Element element) {
         return !element.id().isEmpty();
     }
