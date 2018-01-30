@@ -1,7 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
 import de.hpi.restclient.clients.BPBridgeClient;
-import de.hpi.restclient.pojo.OfferAttribute;
 import de.hpi.restclient.pojo.Rules;
 import de.hpi.shoprulesgenerator.model.OfferFetcher;
 import de.hpi.shoprulesgenerator.model.SelectorGenerator;
@@ -13,9 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.EnumMap;
-import java.util.List;
 
 @Service
 @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
