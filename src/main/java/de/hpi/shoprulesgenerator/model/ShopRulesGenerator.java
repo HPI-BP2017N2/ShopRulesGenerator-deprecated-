@@ -32,22 +32,11 @@ public class ShopRulesGenerator {
         return createRulesFromSelectors(selectorMap);
     }
 
-    //this one needs refactoring
     private Rules createRulesFromSelectors(EnumMap<OfferAttribute, List<String>> selectorMap) {
         Rules rules = new Rules();
         EnumMap<OfferAttribute, Rule> rulesMap = new EnumMap<>(OfferAttribute.class);
         for (Map.Entry<OfferAttribute, List<String>> selectorEntry : selectorMap.entrySet()) {
-            Rule rule = new Rule();
-            rule.setAttribute(selectorEntry.getKey());
-            List<RuleEntry> ruleEntries = new LinkedList<>();
-            for (String selector : selectorEntry.getValue()) {
-                RuleEntry ruleEntry = new RuleEntry();
-                ruleEntry.setSelector(selector);
-                ruleEntry.setAttribute(null);
-                ruleEntry.setResultAsPlainText(true);
-                ruleEntries.add(ruleEntry);
-            }
-            rule.setEntries(ruleEntries);
+            Rule rule = new Rule(getRuleEntriesFromSelectors(selectorEntry.getValue()), selectorEntry.getKey());
             rulesMap.put(selectorEntry.getKey(), rule);
         }
         rules.setRules(rulesMap);
@@ -59,8 +48,8 @@ public class ShopRulesGenerator {
         for (Map.Entry<OfferAttribute, AttributeEntry> attributeEntry : attributeMap.entrySet()) {
             List<String> filteredSelectors = new LinkedList<>();
             for (Map.Entry<String, Integer> selectorEntry : attributeEntry.getValue().getSelectorCountMap().entrySet()) {
-                if (isMinConfidenceReached(selectorEntry.getValue(), attributeEntry.getValue().getAttributeValueFound
-                        ()) && minimumAbsoluteAttributeCountReached(attributeEntry.getValue().getAttributeValueFound())) {
+                if (isMinConfidenceReached(selectorEntry.getValue(), attributeEntry.getValue().getAttributeValueFound())
+                        && minimumAbsoluteAttributeCountReached(attributeEntry.getValue().getAttributeValueFound())) {
                     filteredSelectors.add(selectorEntry.getKey());
                 }
             }
@@ -94,19 +83,16 @@ public class ShopRulesGenerator {
         EnumMap<OfferAttribute, String> snapshot = offer.getOfferSnapshot();
         URL url = new URL(snapshot.get(OfferAttribute.URL));
         Document document = htmlFetcher.fetch(url);
+
         for (Map.Entry<OfferAttribute, String> offerAttribute : snapshot.entrySet()) {
-            if (offerAttribute.getValue() == null) {
-                continue;
-            }
+            if (offerAttribute.getValue() == null) { continue; }
             List<String> selectors = selectorGenerator.getSelectorForOfferAttribute(document, offerAttribute.getValue());
             updateAttributeEntry(attributeMap.get(offerAttribute.getKey()), selectors);
         }
     }
 
     private void updateAttributeEntry(AttributeEntry entry, List<String> selectors) {
-        if (selectors.isEmpty()) {
-            return;
-        }
+        if (selectors.isEmpty()) { return; }
         entry.incrementAttributeValueFound();
         for (String selector : selectors) {
             if (!entry.getSelectorCountMap().containsKey(selector)){
@@ -114,6 +100,15 @@ public class ShopRulesGenerator {
             }
             entry.getSelectorCountMap().put(selector, entry.getSelectorCountMap().get(selector) + 1);
         }
+    }
+
+    //conversion
+    private List<RuleEntry> getRuleEntriesFromSelectors(List<String> selectors){
+        List<RuleEntry> ruleEntries = new LinkedList<>();
+        for (String selector : selectors) {
+            ruleEntries.add(new RuleEntry(selector));
+        }
+        return ruleEntries;
     }
 
     //conditionals
