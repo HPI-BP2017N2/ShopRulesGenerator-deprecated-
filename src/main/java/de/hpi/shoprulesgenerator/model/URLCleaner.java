@@ -12,7 +12,7 @@ public class URLCleaner {
 
     private URLCleanerClient client;
 
-    private URLCleaner(URLCleanerClient client) {
+    public URLCleaner(URLCleanerClient client) {
         setClient(client);
     }
 
