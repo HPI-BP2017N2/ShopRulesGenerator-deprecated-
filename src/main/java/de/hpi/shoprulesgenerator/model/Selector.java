@@ -1,13 +1,10 @@
 package de.hpi.shoprulesgenerator.model;
 
-import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Objects;
-
-@Getter
-@Setter
+@Getter @Setter
 public class Selector {
 
     public enum Type {
@@ -24,21 +21,14 @@ public class Selector {
         setSelector(selector);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof Selector)) { return false; }
-        Selector otherSelector = (Selector) o;
-        return Objects.equals(getSelector(), otherSelector.getSelector()) &&
-                Objects.equals(getType(), otherSelector.getType());
-    }
-
+    @EqualsAndHashCode
     static class TextSelector extends Selector {
         TextSelector(String selector) {
             super(Type.TEXT, selector);
         }
     }
 
+    @EqualsAndHashCode
     @Getter @Setter
     static class AttributeSelector extends Selector {
 
@@ -48,14 +38,9 @@ public class Selector {
             super(Type.ATTRIBUTE, selector);
             setAttributeKey(attributeKey);
         }
-
-        @Override
-        public boolean equals(Object o) {
-            return super.equals(o) &&
-                    Objects.equals(getAttributeKey(), ((AttributeSelector) o).getAttributeKey());
-        }
     }
 
+    @EqualsAndHashCode
     @Getter @Setter
     static class DataSelector extends Selector {
 
@@ -64,12 +49,6 @@ public class Selector {
         DataSelector(String selector, String mapKey) {
             super(Type.DATA, selector);
             setMapKey(mapKey);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return super.equals(o) &&
-                    Objects.equals(getMapKey(), ((DataSelector) o).getMapKey());
         }
     }
 }
