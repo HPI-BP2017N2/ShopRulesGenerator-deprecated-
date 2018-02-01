@@ -8,5 +8,5 @@ import java.net.URL;
 
 public interface HTMLFetcher {
 
-    Document fetch(URL url) throws IOException, URISyntaxException;
+    Document fetch(URL url) throws Exception;
 }
