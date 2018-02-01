@@ -1,5 +1,6 @@
 package de.hpi.shoprulesgenerator.model;
 
+import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -24,11 +25,20 @@ public class SelectorGenerator {
      */
     private List<Selector> getAttributeNodeSelectors(Document html, String offerAttribute) {
         List<Selector> selectors = new LinkedList<>();
-        for (Element element : html.select("*[content*=\"" + offerAttribute + "\"]")){
-            Selector.AttributeSelector selector = new Selector.AttributeSelector(getSelectorForDomElement(element), "");
-            selectors.add(selector);
+        for (Element element : html.select("*[content*=" + offerAttribute + "]")){
+            String attributeKey = getAttributeKeyByValue(element, offerAttribute);
+            selectors.add(new Selector.AttributeSelector(getSelectorForDomElement(element), attributeKey));
         }
         return selectors;
+    }
+
+    private String getAttributeKeyByValue(Element element, String value) {
+        for (Attribute attribute : element.attributes()){
+            if (attribute.getValue().toLowerCase().contains(value.toLowerCase())){
+                return attribute.getKey();
+            }
+        }
+        return null;
     }
 
     /**

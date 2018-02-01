@@ -3,7 +3,10 @@ package de.hpi.shoprulesgenerator.model;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
+@EqualsAndHashCode
 @Getter @Setter
 public class Selector {
 
@@ -21,14 +24,16 @@ public class Selector {
         setSelector(selector);
     }
 
-    @EqualsAndHashCode
+    @ToString
+    @EqualsAndHashCode(callSuper = true)
     static class TextSelector extends Selector {
         TextSelector(String selector) {
             super(Type.TEXT, selector);
         }
     }
 
-    @EqualsAndHashCode
+    @ToString
+    @EqualsAndHashCode(callSuper = true)
     @Getter @Setter
     static class AttributeSelector extends Selector {
 
@@ -40,7 +45,8 @@ public class Selector {
         }
     }
 
-    @EqualsAndHashCode
+    @ToString
+    @EqualsAndHashCode(callSuper = true)
     @Getter @Setter
     static class DataSelector extends Selector {
 

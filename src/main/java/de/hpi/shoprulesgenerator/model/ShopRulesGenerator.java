@@ -64,7 +64,9 @@ public class ShopRulesGenerator {
             try {
                 addSelectorsForOffer(offerFetcher.next(), attributeMap, selectorGenerator, htmlFetcher);
                 Thread.sleep(getFetchDelayInMs());
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return attributeMap;
     }
