@@ -9,8 +9,33 @@ import java.util.List;
 
 public class SelectorGenerator {
 
-    public List<String> getSelectorForOfferAttribute(Document html, String offerAttribute){
+    public List<String> getSelectorsForOfferAttribute(Document html, String offerAttribute) {
         offerAttribute = prepareAttribute(offerAttribute);
+        List<String> selectors = new LinkedList<>();
+        selectors.addAll(getTextNodeSelectors(html, offerAttribute));
+        selectors.addAll(getAttributeNodeSelectors(html, offerAttribute));
+        return selectors;
+    }
+
+    /**
+     * @param html - The whole html document
+     * @param offerAttribute - The string representation of an offer attribute value (f.e. name, price, description)
+     * @return A list of selectors, where the attribute value is contained in an DOM-attribute node as value
+     */
+    private List<String> getAttributeNodeSelectors(Document html, String offerAttribute) {
+        List<String> selectors = new LinkedList<>();
+        for (Element element : html.select("*[content*=\"" + offerAttribute + "\"]")){
+            selectors.add(getSelectorForDomElement(html, element));
+        }
+        return selectors;
+    }
+
+    /**
+     * @param html - The whole html document
+     * @param offerAttribute - The string representation of an offer attribute value (f.e. name, price, description)
+     * @return A list of selectors, where the attribute value is contained between two HTML-Tags
+     */
+    private List<String> getTextNodeSelectors(Document html, String offerAttribute){
         List<String> selectors = new LinkedList<>();
         for (Element element : html.select("*:containsOwn(" + offerAttribute + ")")){
             selectors.add(getSelectorForDomElement(html, element));
@@ -18,11 +43,11 @@ public class SelectorGenerator {
         return selectors;
     }
 
-    public Element selectFirst(Document html, String selector) {
-        Elements elements = html.select(selector);
-        return (elements.isEmpty()) ? null : elements.get(0);
-    }
-
+    /**
+     * @param html - The whole html document
+     * @param element - The target DOM-Element
+     * @return A minimal selector with highest possible identity match to select the element out of html.
+     */
     private String getSelectorForDomElement(Document html, Element element){
         StringBuilder selectorBuilder = new StringBuilder();
         while (!isElementIDSet(element) && element.parent() != null){

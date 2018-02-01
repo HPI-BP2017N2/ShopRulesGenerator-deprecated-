@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
@@ -87,7 +85,7 @@ public class ShopRulesGenerator {
 
         for (Map.Entry<OfferAttribute, String> offerAttribute : snapshot.entrySet()) {
             if (offerAttribute.getValue() == null) { continue; }
-            List<String> selectors = selectorGenerator.getSelectorForOfferAttribute(document, offerAttribute.getValue());
+            List<String> selectors = selectorGenerator.getSelectorsForOfferAttribute(document, offerAttribute.getValue());
             updateAttributeEntry(attributeMap.get(offerAttribute.getKey()), selectors);
         }
     }
@@ -97,7 +95,7 @@ public class ShopRulesGenerator {
         entry.incrementAttributeValueFound();
         for (String selector : selectors) {
             if (!entry.getSelectorCountMap().containsKey(selector)){
-                entry.getSelectorCountMap().put(selector, 1);
+                entry.getSelectorCountMap().put(selector, 0); //gets incremented in next step
             }
             entry.getSelectorCountMap().put(selector, entry.getSelectorCountMap().get(selector) + 1);
         }
