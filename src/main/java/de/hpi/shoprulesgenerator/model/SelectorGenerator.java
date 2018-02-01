@@ -28,6 +28,12 @@ public class SelectorGenerator {
         for (Element element : html.select("*[content*=" + offerAttribute + "]")){
             String attributeKey = getAttributeKeyByValue(element, offerAttribute);
             selectors.add(new Selector.AttributeSelector(getSelectorForDomElement(element), attributeKey));
+
+            /*
+            TODO
+            - dont use getSelectorForDomElement, since its not reliable for attributeNodes
+            - use a method which finds the right tag (span, meta etc) and the matching itemprop
+             */
         }
         return selectors;
     }
