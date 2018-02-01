@@ -1,17 +1,12 @@
 package de.hpi.shoprulesgenerator.controller;
 
-import de.hpi.restclient.dto.GetRulesResponse;
 import de.hpi.restclient.pojo.Rules;
-import de.hpi.shoprulesgenerator.model.ShopRulesGenerator;
 import de.hpi.shoprulesgenerator.service.ShopRulesGeneratorService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,10 +32,10 @@ public class ShopRulesGeneratorController {
     @RequestMapping(value = "/getRules", method = RequestMethod.GET)
     public void getRules(@RequestParam(value="shopID") long shopID, @RequestParam(value="responseRoot") String
             responseRoot, @RequestParam(value="responsePath") String responsePath) {
-        new Thread(() -> sendAsyncGetRulesReponse(responseRoot, responsePath, getService().generateForShop(shopID)));
+        new Thread(() -> sendAsyncGetRulesResponse(responseRoot, responsePath, getService().generateForShop(shopID)));
     }
 
-    private void sendAsyncGetRulesReponse(String responseRoot, String responsePath, Rules rules){
+    private void sendAsyncGetRulesResponse(String responseRoot, String responsePath, Rules rules){
         getRestTemplate().postForObject(getGetRulesResponseURI(responseRoot, responsePath), rules, Rules.class);
     }
 
