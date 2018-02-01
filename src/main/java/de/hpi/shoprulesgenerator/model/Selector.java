@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.PROTECTED)
 public class Selector {
@@ -22,31 +24,52 @@ public class Selector {
         setSelector(selector);
     }
 
-    public static class TextSelector extends Selector {
-        public TextSelector(String selector) {
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Selector)) { return false; }
+        Selector otherSelector = (Selector) o;
+        return Objects.equals(getSelector(), otherSelector.getSelector()) &&
+                Objects.equals(getType(), otherSelector.getType());
+    }
+
+    static class TextSelector extends Selector {
+        TextSelector(String selector) {
             super(Type.TEXT, selector);
         }
     }
 
     @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
-    public static class AttributeSelector extends Selector {
+    static class AttributeSelector extends Selector {
 
         private String attributeKey;
 
-        public AttributeSelector(String selector, String attributeKey) {
+        AttributeSelector(String selector, String attributeKey) {
             super(Type.ATTRIBUTE, selector);
             setAttributeKey(attributeKey);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return super.equals(o) &&
+                    Objects.equals(getAttributeKey(), ((AttributeSelector) o).getAttributeKey());
         }
     }
 
     @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
-    public static class DataSelector extends Selector {
+    static class DataSelector extends Selector {
 
         private String mapKey;
 
-        public DataSelector(String selector, String mapKey) {
+        DataSelector(String selector, String mapKey) {
             super(Type.DATA, selector);
             setMapKey(mapKey);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return super.equals(o) &&
+                    Objects.equals(getMapKey(), ((DataSelector) o).getMapKey());
         }
     }
 }

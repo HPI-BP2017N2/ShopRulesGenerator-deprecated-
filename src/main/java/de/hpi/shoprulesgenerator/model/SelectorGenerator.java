@@ -9,9 +9,9 @@ import java.util.List;
 
 public class SelectorGenerator {
 
-    public List<String> getSelectorsForOfferAttribute(Document html, String offerAttribute) {
+    public List<Selector> getSelectorsForOfferAttribute(Document html, String offerAttribute) {
         offerAttribute = prepareAttribute(offerAttribute);
-        List<String> selectors = new LinkedList<>();
+        List<Selector> selectors = new LinkedList<>();
         selectors.addAll(getTextNodeSelectors(html, offerAttribute));
         selectors.addAll(getAttributeNodeSelectors(html, offerAttribute));
         return selectors;
@@ -22,10 +22,12 @@ public class SelectorGenerator {
      * @param offerAttribute - The string representation of an offer attribute value (f.e. name, price, description)
      * @return A list of selectors, where the attribute value is contained in an DOM-attribute node as value
      */
-    private List<String> getAttributeNodeSelectors(Document html, String offerAttribute) {
-        List<String> selectors = new LinkedList<>();
+    private List<Selector> getAttributeNodeSelectors(Document html, String offerAttribute) {
+        List<Selector> selectors = new LinkedList<>();
         for (Element element : html.select("*[content*=\"" + offerAttribute + "\"]")){
-            selectors.add(getSelectorForDomElement(html, element));
+            Selector.AttributeSelector selector = new Selector.AttributeSelector(getSelectorForDomElement(html,
+                    element), "");
+            selectors.add(selector);
         }
         return selectors;
     }
@@ -35,10 +37,10 @@ public class SelectorGenerator {
      * @param offerAttribute - The string representation of an offer attribute value (f.e. name, price, description)
      * @return A list of selectors, where the attribute value is contained between two HTML-Tags
      */
-    private List<String> getTextNodeSelectors(Document html, String offerAttribute){
-        List<String> selectors = new LinkedList<>();
+    private List<Selector> getTextNodeSelectors(Document html, String offerAttribute){
+        List<Selector> selectors = new LinkedList<>();
         for (Element element : html.select("*:containsOwn(" + offerAttribute + ")")){
-            selectors.add(getSelectorForDomElement(html, element));
+            selectors.add(new Selector.TextSelector(getSelectorForDomElement(html, element)));
         }
         return selectors;
     }
