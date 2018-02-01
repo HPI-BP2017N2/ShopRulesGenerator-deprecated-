@@ -25,8 +25,7 @@ public class SelectorGenerator {
     private List<Selector> getAttributeNodeSelectors(Document html, String offerAttribute) {
         List<Selector> selectors = new LinkedList<>();
         for (Element element : html.select("*[content*=\"" + offerAttribute + "\"]")){
-            Selector.AttributeSelector selector = new Selector.AttributeSelector(getSelectorForDomElement(html,
-                    element), "");
+            Selector.AttributeSelector selector = new Selector.AttributeSelector(getSelectorForDomElement(element), "");
             selectors.add(selector);
         }
         return selectors;
@@ -40,17 +39,16 @@ public class SelectorGenerator {
     private List<Selector> getTextNodeSelectors(Document html, String offerAttribute){
         List<Selector> selectors = new LinkedList<>();
         for (Element element : html.select("*:containsOwn(" + offerAttribute + ")")){
-            selectors.add(new Selector.TextSelector(getSelectorForDomElement(html, element)));
+            selectors.add(new Selector.TextSelector(getSelectorForDomElement(element)));
         }
         return selectors;
     }
 
     /**
-     * @param html - The whole html document
      * @param element - The target DOM-Element
      * @return A minimal selector with highest possible identity match to select the element out of html.
      */
-    private String getSelectorForDomElement(Document html, Element element){
+    private String getSelectorForDomElement(Element element){
         StringBuilder selectorBuilder = new StringBuilder();
         while (!isElementIDSet(element) && element.parent() != null){
             int tagIndex = getTagIndexForChild(element);

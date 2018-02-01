@@ -8,10 +8,10 @@ import java.util.HashMap;
 @Getter @Setter
 public class AttributeEntry {
 
-    private HashMap<String, Integer> selectorCountMap;
+    private HashMap<Selector, Integer> selectorCountMap;
     private int attributeValueFound;
 
-    public AttributeEntry() {
+    AttributeEntry() {
         setAttributeValueFound(0);
         setSelectorCountMap(new HashMap<>());
     }

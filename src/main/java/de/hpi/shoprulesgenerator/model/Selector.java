@@ -6,8 +6,8 @@ import lombok.Setter;
 
 import java.util.Objects;
 
-@Getter(AccessLevel.PROTECTED)
-@Setter(AccessLevel.PROTECTED)
+@Getter
+@Setter
 public class Selector {
 
     public enum Type {
@@ -39,7 +39,7 @@ public class Selector {
         }
     }
 
-    @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
+    @Getter @Setter
     static class AttributeSelector extends Selector {
 
         private String attributeKey;
@@ -56,7 +56,7 @@ public class Selector {
         }
     }
 
-    @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
+    @Getter @Setter
     static class DataSelector extends Selector {
 
         private String mapKey;
