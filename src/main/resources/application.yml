@@ -1,0 +1,18 @@
+shoprulesgenerator:
+ pageSize: 10
+ userAgent: 'Mozilla/5.0 (compatible; HPI-BPN2-2017/2.1; https://hpi
+ .de/naumann/teaching/bachelorprojekte/inventory-management.html)'
+ maxOfferCount: 20
+ minMatchCountPerAttribute: 10
+ minConfidence: 100 #given in percent
+ fetchDelay: 20000 #give in milliseconds
+bpbridge:
+ root: ${BPBRIDGE_IP}
+ getRandomOfferRoute: '/getRandomOffers'
+ shopIDToURLRoute: '/shopIDToUrl'
+ matchAttributeRoute: '/matchAttribute'
+urlcleaner:
+ root: ${URLCLEANER_IP}
+ cleanURLRoute: 'cleanURL'
+server:
+  port: ${SHOPRULESGENERATOR_PORT}
