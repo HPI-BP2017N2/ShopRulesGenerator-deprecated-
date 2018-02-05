@@ -16,15 +16,14 @@ public class Selector {
         DATA
     }
 
-    private String selector;
-    private Type type;
+    protected String selector;
+    protected Type type;
 
     private Selector(Type type, String selector){
         setType(type);
         setSelector(selector);
     }
 
-    @ToString
     @EqualsAndHashCode(callSuper = true)
     static class TextSelector extends Selector {
         TextSelector(String selector) {
@@ -32,7 +31,6 @@ public class Selector {
         }
     }
 
-    @ToString
     @EqualsAndHashCode(callSuper = true)
     @Getter @Setter
     static class AttributeSelector extends Selector {
@@ -45,7 +43,6 @@ public class Selector {
         }
     }
 
-    @ToString
     @EqualsAndHashCode(callSuper = true)
     @Getter @Setter
     static class DataSelector extends Selector {
