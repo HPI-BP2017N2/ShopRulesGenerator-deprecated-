@@ -1,11 +1,9 @@
 package de.hpi.shoprulesgenerator.service;
 
 import de.hpi.restclient.clients.BPBridgeClient;
+import de.hpi.restclient.clients.URLCleanerClient;
 import de.hpi.restclient.pojo.Rules;
-import de.hpi.shoprulesgenerator.model.OfferFetcher;
-import de.hpi.shoprulesgenerator.model.SelectorGenerator;
-import de.hpi.shoprulesgenerator.model.ShopRulesGenerator;
-import de.hpi.shoprulesgenerator.model.WebHTMLFetcher;
+import de.hpi.shoprulesgenerator.model.*;
 import de.hpi.shoprulesgenerator.properties.ShopRulesGeneratorProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,10 +22,11 @@ public class ShopRulesGeneratorService {
     private WebHTMLFetcher webHTMLFetcher;
 
     @Autowired
-    public ShopRulesGeneratorService(ShopRulesGeneratorProperties properties, BPBridgeClient bpBridgeClient) {
+    public ShopRulesGeneratorService(ShopRulesGeneratorProperties properties, BPBridgeClient bpBridgeClient,
+                                     URLCleanerClient urlCleanerClient) {
         setBpBridgeClient(bpBridgeClient);
         setProperties(properties);
-        setWebHTMLFetcher(new WebHTMLFetcher(getProperties().getUserAgent()));
+        setWebHTMLFetcher(new WebHTMLFetcher(new URLCleaner(urlCleanerClient), getProperties().getUserAgent()));
         setSelectorGenerator(new SelectorGenerator());
         setShopRulesGenerator(new ShopRulesGenerator(
                 getProperties().getMaxOfferCount(),

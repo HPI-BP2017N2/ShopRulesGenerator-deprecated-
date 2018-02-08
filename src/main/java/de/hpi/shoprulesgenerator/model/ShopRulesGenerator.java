@@ -79,7 +79,8 @@ public class ShopRulesGenerator {
         return attributeMap;
     }
 
-    private void addSelectorsForOffer(Offer offer, EnumMap<OfferAttribute, AttributeEntry> attributeMap, SelectorGenerator selectorGenerator, HTMLFetcher htmlFetcher) throws NoSuchFieldException, IllegalAccessException, IOException, URISyntaxException {
+    private void addSelectorsForOffer(Offer offer, EnumMap<OfferAttribute, AttributeEntry> attributeMap,
+                                      SelectorGenerator selectorGenerator, HTMLFetcher htmlFetcher) throws Exception {
         EnumMap<OfferAttribute, String> snapshot = offer.getOfferSnapshot();
         URL url = new URL(snapshot.get(OfferAttribute.URL));
         Document document = htmlFetcher.fetch(url);
