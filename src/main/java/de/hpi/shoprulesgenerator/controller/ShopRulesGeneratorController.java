@@ -1,5 +1,6 @@
 package de.hpi.shoprulesgenerator.controller;
 
+import de.hpi.restclient.dto.GetRulesResponse;
 import de.hpi.restclient.pojo.Rules;
 import de.hpi.shoprulesgenerator.service.ShopRulesGeneratorService;
 import lombok.AccessLevel;
@@ -32,10 +33,14 @@ public class ShopRulesGeneratorController {
     @RequestMapping(value = "/getRules", method = RequestMethod.GET)
     public void getRules(@RequestParam(value="shopID") long shopID, @RequestParam(value="responseRoot") String
             responseRoot, @RequestParam(value="responsePath") String responsePath) {
-        new Thread(() -> sendAsyncGetRulesResponse(responseRoot, responsePath, getService().generateForShop(shopID)));
+        new Thread(() -> sendAsyncGetRulesResponse(responseRoot, responsePath, getService().generateForShop(shopID),
+                shopID));
     }
 
-    private void sendAsyncGetRulesResponse(String responseRoot, String responsePath, Rules rules){
+    private void sendAsyncGetRulesResponse(String responseRoot, String responsePath, Rules rules, long shopID){
+        GetRulesResponse response = new GetRulesResponse();
+        response.setRules(rules);
+        response.setShopID(shopID);
         getRestTemplate().postForObject(getGetRulesResponseURI(responseRoot, responsePath), rules, String.class);
     }
 
