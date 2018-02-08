@@ -36,7 +36,7 @@ public class ShopRulesGeneratorController {
     }
 
     private void sendAsyncGetRulesResponse(String responseRoot, String responsePath, Rules rules){
-        getRestTemplate().postForObject(getGetRulesResponseURI(responseRoot, responsePath), rules, Rules.class);
+        getRestTemplate().postForObject(getGetRulesResponseURI(responseRoot, responsePath), rules, String.class);
     }
 
     private URI getGetRulesResponseURI(String responseRoot, String responsePath) {
