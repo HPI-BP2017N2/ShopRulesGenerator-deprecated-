@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
@@ -28,14 +26,14 @@ public class ShopRulesGenerator {
                           SelectorGenerator selectorGenerator) {
         EnumMap<OfferAttribute, AttributeEntry> attributeMap = addSelectorsForOffer(offerFetcher, selectorGenerator,
                 htmlFetcher);
-        EnumMap<OfferAttribute, List<String>> selectorMap = filterSelectors(attributeMap);
+        EnumMap<OfferAttribute, List<Selector>> selectorMap = filterSelectors(attributeMap);
         return createRulesFromSelectors(selectorMap);
     }
 
-    private Rules createRulesFromSelectors(EnumMap<OfferAttribute, List<String>> selectorMap) {
+    private Rules createRulesFromSelectors(EnumMap<OfferAttribute, List<Selector>> selectorMap) {
         Rules rules = new Rules();
         EnumMap<OfferAttribute, Rule> rulesMap = new EnumMap<>(OfferAttribute.class);
-        for (Map.Entry<OfferAttribute, List<String>> selectorEntry : selectorMap.entrySet()) {
+        for (Map.Entry<OfferAttribute, List<Selector>> selectorEntry : selectorMap.entrySet()) {
             Rule rule = new Rule(getRuleEntriesFromSelectors(selectorEntry.getValue()), selectorEntry.getKey());
             rulesMap.put(selectorEntry.getKey(), rule);
         }
@@ -43,11 +41,11 @@ public class ShopRulesGenerator {
         return rules;
     }
 
-    private EnumMap<OfferAttribute, List<String>> filterSelectors(EnumMap<OfferAttribute, AttributeEntry> attributeMap) {
-        EnumMap<OfferAttribute, List<String>> selectorMap = new EnumMap<>(OfferAttribute.class);
+    private EnumMap<OfferAttribute, List<Selector>> filterSelectors(EnumMap<OfferAttribute, AttributeEntry> attributeMap) {
+        EnumMap<OfferAttribute, List<Selector>> selectorMap = new EnumMap<>(OfferAttribute.class);
         for (Map.Entry<OfferAttribute, AttributeEntry> attributeEntry : attributeMap.entrySet()) {
-            List<String> filteredSelectors = new LinkedList<>();
-            for (Map.Entry<String, Integer> selectorEntry : attributeEntry.getValue().getSelectorCountMap().entrySet()) {
+            List<Selector> filteredSelectors = new LinkedList<>();
+            for (Map.Entry<Selector, Integer> selectorEntry : attributeEntry.getValue().getSelectorCountMap().entrySet()) {
                 if (isMinConfidenceReached(selectorEntry.getValue(), attributeEntry.getValue().getAttributeValueFound())
                         && minimumAbsoluteAttributeCountReached(attributeEntry.getValue().getAttributeValueFound())) {
                     filteredSelectors.add(selectorEntry.getKey());
@@ -66,7 +64,9 @@ public class ShopRulesGenerator {
             try {
                 addSelectorsForOffer(offerFetcher.next(), attributeMap, selectorGenerator, htmlFetcher);
                 Thread.sleep(getFetchDelayInMs());
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return attributeMap;
     }
@@ -87,29 +87,44 @@ public class ShopRulesGenerator {
 
         for (Map.Entry<OfferAttribute, String> offerAttribute : snapshot.entrySet()) {
             if (offerAttribute.getValue() == null) { continue; }
-            List<String> selectors = selectorGenerator.getSelectorForOfferAttribute(document, offerAttribute.getValue());
+            List<Selector> selectors = selectorGenerator.getSelectorsForOfferAttribute(document, offerAttribute.getValue());
             updateAttributeEntry(attributeMap.get(offerAttribute.getKey()), selectors);
         }
     }
 
-    private void updateAttributeEntry(AttributeEntry entry, List<String> selectors) {
+    private void updateAttributeEntry(AttributeEntry entry, List<Selector> selectors) {
         if (selectors.isEmpty()) { return; }
         entry.incrementAttributeValueFound();
-        for (String selector : selectors) {
+        for (Selector selector : selectors) {
             if (!entry.getSelectorCountMap().containsKey(selector)){
-                entry.getSelectorCountMap().put(selector, 1);
+                entry.getSelectorCountMap().put(selector, 0); //gets incremented in next step
             }
             entry.getSelectorCountMap().put(selector, entry.getSelectorCountMap().get(selector) + 1);
         }
     }
 
     //conversion
-    private List<RuleEntry> getRuleEntriesFromSelectors(List<String> selectors){
+    private List<RuleEntry> getRuleEntriesFromSelectors(List<Selector> selectors){
         List<RuleEntry> ruleEntries = new LinkedList<>();
-        for (String selector : selectors) {
-            ruleEntries.add(new RuleEntry(selector));
+        for (Selector selector : selectors) {
+            ruleEntries.add(convertSelectorToRuleEntry(selector));
+
         }
         return ruleEntries;
+    }
+
+    private RuleEntry convertSelectorToRuleEntry(Selector selector) {
+        RuleEntry entry = new RuleEntry(selector.getSelector());
+        switch (selector.getType()) {
+            case DATA:
+                entry.setResultAsPlainText(false);
+                entry.setAttribute(((Selector.DataSelector) selector).getMapKey());
+                break;
+            case ATTRIBUTE:
+                entry.setAttribute(((Selector.AttributeSelector) selector).getAttributeKey());
+                break;
+        }
+        return entry;
     }
 
     //conditionals

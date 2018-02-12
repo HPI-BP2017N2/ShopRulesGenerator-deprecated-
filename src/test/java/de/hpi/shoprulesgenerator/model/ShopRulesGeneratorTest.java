@@ -37,7 +37,7 @@ class ShopRulesGeneratorTest {
         for (Map.Entry<OfferAttribute, Rule> ruleEntry : rules.getRules().entrySet()){
             System.out.println(ruleEntry.getKey());
             for (RuleEntry entry : ruleEntry.getValue().getEntries()) {
-                System.out.println(entry.getSelector());
+                System.out.println(entry.getAttribute() + " " + entry.getSelector());
             }
             System.out.println("====================");
         }
