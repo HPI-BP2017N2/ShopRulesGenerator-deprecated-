@@ -1,4 +1,4 @@
-shoprulesgenerator:
+shoprulesgenerator-settings:
  pageSize: 10
  userAgent: 'Mozilla/5.0 (compatible; HPI-BPN2-2017/2.1; https://hpi
  .de/naumann/teaching/bachelorprojekte/inventory-management.html)'
@@ -16,3 +16,11 @@ urlcleaner:
  cleanURLRoute: 'cleanURL'
 server:
   port: ${SHOPRULESGENERATOR_PORT}
+spring:
+  data:
+    mongodb:
+      host: ${MONGO_IP}
+      port: ${MONGO_PORT}
+      username: ${MONGO_BRIDGE_USERNAME}
+      password: ${MONGO_BRIDGE_PW}
+      database: data

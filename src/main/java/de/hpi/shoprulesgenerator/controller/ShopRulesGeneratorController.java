@@ -1,5 +1,6 @@
 package de.hpi.shoprulesgenerator.controller;
 
+import de.hpi.restclient.dto.GenerateRulesResponse;
 import de.hpi.restclient.dto.GetRulesResponse;
 import de.hpi.restclient.pojo.Rules;
 import de.hpi.shoprulesgenerator.service.ShopRulesGeneratorService;
@@ -30,15 +31,22 @@ public class ShopRulesGeneratorController {
         setRestTemplate(restTemplateBuilder.build());
     }
 
-    @RequestMapping(value = "/getRules", method = RequestMethod.GET)
-    public void getRules(@RequestParam(value="shopID") long shopID, @RequestParam(value="responseRoot") String
+    @RequestMapping(value = "/generateRules", method = RequestMethod.GET)
+    public void generateRules(@RequestParam(value="shopID") long shopID, @RequestParam(value="responseRoot") String
             responseRoot, @RequestParam(value="responsePath") String responsePath) {
         new Thread(() -> sendAsyncGetRulesResponse(responseRoot, responsePath, getService().generateForShop(shopID),
-                shopID));
+                shopID)).start();
+    }
+
+    @RequestMapping(value = "/getRules", method = RequestMethod.GET, produces = "application/json")
+    public GetRulesResponse getRules(@RequestParam(value="shopID") long shopID) {
+        GetRulesResponse response = new  GetRulesResponse();
+        response.setRules(getService().getRulesForShop(shopID));
+        return response;
     }
 
     private void sendAsyncGetRulesResponse(String responseRoot, String responsePath, Rules rules, long shopID){
-        GetRulesResponse response = new GetRulesResponse();
+        GenerateRulesResponse response = new GenerateRulesResponse();
         response.setRules(rules);
         response.setShopID(shopID);
         getRestTemplate().postForObject(getGetRulesResponseURI(responseRoot, responsePath), rules, String.class);
