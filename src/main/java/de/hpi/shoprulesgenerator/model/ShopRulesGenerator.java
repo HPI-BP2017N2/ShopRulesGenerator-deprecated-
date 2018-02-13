@@ -56,7 +56,8 @@ public class ShopRulesGenerator {
         return selectorMap;
     }
 
-    private EnumMap<OfferAttribute,AttributeEntry> addSelectorsForOffer(Iterator<Offer> offerFetcher, SelectorGenerator selectorGenerator, HTMLFetcher htmlFetcher) {
+    private EnumMap<OfferAttribute, AttributeEntry> addSelectorsForOffer(Iterator<Offer> offerFetcher,
+                                                                         SelectorGenerator selectorGenerator, HTMLFetcher htmlFetcher) {
         EnumMap<OfferAttribute, AttributeEntry> attributeMap = createEmptyAttributeMap();
         for (int iOffer = 0;
              iOffer < getMaxOfferCount() && requiresMoreOffers(attributeMap) && offerFetcher.hasNext();
@@ -83,7 +84,7 @@ public class ShopRulesGenerator {
                                       SelectorGenerator selectorGenerator, HTMLFetcher htmlFetcher) throws Exception {
         EnumMap<OfferAttribute, String> snapshot = offer.getOfferSnapshot();
         URL url = new URL(snapshot.get(OfferAttribute.URL));
-        Document document = htmlFetcher.fetch(url);
+        Document document = htmlFetcher.fetch(url, offer.getShopId().longValue());
 
         for (Map.Entry<OfferAttribute, String> offerAttribute : snapshot.entrySet()) {
             if (offerAttribute.getValue() == null) { continue; }
@@ -108,7 +109,6 @@ public class ShopRulesGenerator {
         List<RuleEntry> ruleEntries = new LinkedList<>();
         for (Selector selector : selectors) {
             ruleEntries.add(convertSelectorToRuleEntry(selector));
-
         }
         return ruleEntries;
     }
