@@ -11,7 +11,7 @@ import java.net.URL;
 public class FileHTMLFetcher implements HTMLFetcher {
 
     @Override
-    public Document fetch(URL url) throws IOException, URISyntaxException {
+    public Document fetch(URL url, long shopID) throws IOException, URISyntaxException {
         if (!url.getProtocol().equals("file")) {
             throw new IOException("Protocol of url is not a valid file protocol");
         }

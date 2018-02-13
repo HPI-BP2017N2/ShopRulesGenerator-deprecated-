@@ -16,8 +16,8 @@ public class URLCleaner {
         setClient(client);
     }
 
-    public String clean(String dirtyUrl) throws Exception {
-        CleanURLResponse response = getClient().cleanURL(dirtyUrl);
+    public String clean(String dirtyUrl, long shopID) throws Exception {
+        CleanURLResponse response = getClient().cleanURL(dirtyUrl, shopID);
         if (response.isBlacklisted()) {
             throw new Exception("URL is blacklisted");
         }
