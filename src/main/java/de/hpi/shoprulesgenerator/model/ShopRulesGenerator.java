@@ -85,6 +85,7 @@ public class ShopRulesGenerator {
         EnumMap<OfferAttribute, String> snapshot = offer.getOfferSnapshot();
         URL url = new URL(snapshot.get(OfferAttribute.URL));
         Document document = htmlFetcher.fetch(url, offer.getShopId().longValue());
+        System.out.println(document.html());
 
         for (Map.Entry<OfferAttribute, String> offerAttribute : snapshot.entrySet()) {
             if (offerAttribute.getValue() == null) { continue; }

@@ -50,7 +50,6 @@ public class ShopRulesGeneratorService {
         Rules generatedRules = getShopRulesGenerator().generate(offerFetcher, getWebHTMLFetcher(),
                 getSelectorGenerator());
         getRulesRepository().save(new RulesDBEntry(shopID, generatedRules));
-        System.out.println("saved " + generatedRules);
         return generatedRules;
     }
 

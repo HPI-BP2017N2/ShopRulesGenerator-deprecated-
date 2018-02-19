@@ -6,6 +6,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
 public class URLCleaner {
@@ -21,6 +24,10 @@ public class URLCleaner {
         if (response.isBlacklisted()) {
             throw new Exception("URL is blacklisted");
         }
-        return response.getCleanUrl();
+        return decodeURL(response.getCleanUrl());
+    }
+
+    private String decodeURL(String cleanUrl) throws UnsupportedEncodingException {
+        return URLDecoder.decode(cleanUrl, "UTF-8");
     }
 }
