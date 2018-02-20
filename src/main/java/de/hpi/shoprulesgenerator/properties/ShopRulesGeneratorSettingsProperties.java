@@ -12,9 +12,9 @@ import javax.validation.constraints.Min;
 
 @Component
 @EnableConfigurationProperties
-@ConfigurationProperties("shoprulesgenerator")
+@ConfigurationProperties("shoprulesgenerator-settings")
 @Getter @Setter
-public class ShopRulesGeneratorProperties {
+public class ShopRulesGeneratorSettingsProperties {
 
     @Min(1)
     @Max(20)

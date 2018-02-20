@@ -8,5 +8,5 @@ import java.net.URL;
 
 public interface HTMLFetcher {
 
-    Document fetch(URL url) throws Exception;
+    Document fetch(URL url, long shopID) throws Exception;
 }

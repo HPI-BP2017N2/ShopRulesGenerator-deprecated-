@@ -22,17 +22,18 @@ public class WebHTMLFetcher implements HTMLFetcher {
     }
 
     @Override
-    public Document fetch(URL url) throws Exception {
-        URL cleanedURL = cleanURL(url);
+    public Document fetch(URL url, long shopID) throws Exception {
+        URL cleanedURL = cleanURL(url, shopID);
         return Jsoup
                 .connect(cleanedURL.toString())
                 .userAgent(getUserAgent())
                 .get();
     }
 
-    private URL cleanURL(URL url) throws Exception {
+    private URL cleanURL(URL url, long shopID) throws Exception {
         String dirtyUrl = url.toString();
-        String cleanUrl = getUrlCleaner().clean(dirtyUrl);
+        String cleanUrl = getUrlCleaner().clean(dirtyUrl, shopID
+        );
         return new URL(cleanUrl);
     }
 }
