@@ -27,7 +27,14 @@ public class URLCleaner {
         return decodeURL(response.getCleanUrl());
     }
 
-    private String decodeURL(String cleanUrl) throws UnsupportedEncodingException {
-        return URLDecoder.decode(cleanUrl, "UTF-8");
+    private String decodeURL(String cleanUrl) {
+        while (cleanUrl.matches(".*%[0-9(a-f|A-F)]{2}.*")) {
+            try {
+                cleanUrl = java.net.URLDecoder.decode(cleanUrl, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return cleanUrl;
     }
 }

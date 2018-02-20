@@ -32,10 +32,8 @@ public class ShopRulesGeneratorController {
     }
 
     @RequestMapping(value = "/generateRules", method = RequestMethod.GET)
-    public void generateRules(@RequestParam(value="shopID") long shopID, @RequestParam(value="responseRoot") String
-            responseRoot, @RequestParam(value="responsePath") String responsePath) {
-        new Thread(() -> sendAsyncGetRulesResponse(responseRoot, responsePath, getService().generateForShop(shopID),
-                shopID)).start();
+    public void generateRules(@RequestParam(value="shopID") long shopID) {
+        new Thread (() -> getService().generateForShop(shopID)).start();
     }
 
     @RequestMapping(value = "/getRules", method = RequestMethod.GET, produces = "application/json")
@@ -45,18 +43,4 @@ public class ShopRulesGeneratorController {
         return response;
     }
 
-    private void sendAsyncGetRulesResponse(String responseRoot, String responsePath, Rules rules, long shopID){
-        GenerateRulesResponse response = new GenerateRulesResponse();
-        response.setRules(rules);
-        response.setShopID(shopID);
-        getRestTemplate().postForObject(getGetRulesResponseURI(responseRoot, responsePath), rules, String.class);
-    }
-
-    private URI getGetRulesResponseURI(String responseRoot, String responsePath) {
-        return UriComponentsBuilder.fromUriString(responseRoot)
-                .path(responsePath)
-                .build()
-                .encode()
-                .toUri();
-    }
 }
